@@ -49,25 +49,29 @@ function doAnimation() {
       let $checkbox = el.find(`input[type="checkbox"]`);
       $checkbox.prop("checked", true);
 
-      // Start it
       if (!el.find(".start-button").length) {
         res();
       }
 
+      // Start it
       el.find(".start-button").click();
 
-      // Modify play button change
-      let clk = () => {
-        el.find(".play-button").click();
+      let steps = 0;
 
-        if (el.find(".step").length === el.find(".been-watched").length) {
+      let intervalId = setInterval(() => {
+        let $play = el.find(".play-button");
+
+        if (!$play.length) {
+          return;
+        }
+
+        $play.click();
+        if (++steps >= el.find(".step").length) {
           // All of them has been watched
-          el.off("DOMSubtreeModified", clk);
+          clearInterval(intervalId);
           res();
         }
-      };
-
-      el.on("DOMSubtreeModified", clk);
+      }, 1000);
     })
   ));
 }
@@ -114,12 +118,6 @@ function triggerDragAndDrop($elemDrag, $elemDrop) {
 
   // function for triggering mouse events
   var fireMouseEvent = function(type, elem, centerX, centerY) {
-    // var evt = document.createEvent('MouseEvents');
-    // event.initMouseEvent(type, canBubble, cancelable, view,
-    //   detail, screenX, screenY, clientX, clientY,
-    //   ctrlKey, altKey, shiftKey, metaKey,
-    //   button, relatedTarget);
-
     let evt = new MouseEvent(type, {
       bubbles      : true,
       cancelable   : true,
@@ -132,9 +130,6 @@ function triggerDragAndDrop($elemDrag, $elemDrop) {
       button       : 0,
       relatedTarget: elem,
     });
-
-    // evt.initMouseEvent(type, true, true, window, 1, 1, 1, centerX, centerY,
-    // false, false, false, false, 0, elem);
 
     if (/^dr/i.test(type)) {
       evt.dataTransfer = evt.dataTransfer || createNewDataTransfer();
@@ -220,97 +215,15 @@ function doDefinitionMatch() {
 }
 
 function injectButton() {
-  /**
-   * Adding rule to the css style sheet, copied from
-   * http://tobiasahlin.com/spinkit/
-   */
-  function addCssRules() {
-    var style = document.createElement('style');
-    style.type = 'text/css';
-    let rule = `
-@keyframes sk-bounce {
-  0%, 100% {
-    transform: scale(0);
-    -webkit-transform: scale(0); }
-  50% {
-    transform: scale(1);
-    -webkit-transform: scale(1); } }
-@keyframes blink {
-  0%, 100% {
-    opacity: 1; }
-  50% {
-    opacity: 0; } }
-.spinner {
-  margin: 0;
-  position: fixed;
-  width: 56px;
-  height: 56px;
-  right: 40px;
-  bottom: 60px;
-  border-radius: 40px;
-  text-align: center;
-  line-height: 56px;
-  background: #f57c00;
-  color: white;
-  font-size: 25px;
-  border: #f57c00 1px solid;
-  cursor: pointer;
-  box-shadow: 0px 3px 4px #bbb; }
-  .spinner .loading {
-    color: transparent;
-    pointer-events: none;
-    cursor: not-allowed; }
-    .spinner .loading .double-bounce1, .spinner .loading .double-bounce2 {
-      visibility: visible; }
-
-.double-bounce1, .double-bounce2 {
-  visibility: hidden;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background-color: white;
-  opacity: .6;
-  position: absolute;
-  top: 0;
-  left: 0;
-  -webkit-animation: sk-bounce 2s infinite ease-in-out;
-  animation: sk-bounce 2s infinite ease-in-out; }
-
-.double-bounce2 {
-  -webkit-animation-delay: -1s;
-  animation-delay: -1s; }
-
-#zyboost-task {
-  position: fixed;
-  background: white;
-  right: 40px;
-  bottom: 120px;
-  box-shadow: 2px 2px 10px #bbb;
-  padding: 20px;
-  z-index: 9999999; }
-  #zyboost-task .loading {
-    animation: blink 2s infinite ease; }
-    #zyboost-task .loading:after {
-      content: "..."; }
-`;
-    style.innerHTML = rule;
-    document.getElementsByTagName('head')[0].appendChild(style);
-  }
-
-  function addButton() {
-    let $button = $(`
-<div id="zyboost-button" href="void(0);" class="spinner">  
+  let $button = $(`
+<div id="zyboost-button" href="void(0);" class="spinner">
+    <span class="check-mark">✓</span>
     <div class="double-bounce1"></div>
     <div class="double-bounce2"></div>
-    ✓
 </div>
 `);
-    $button.click(handleButtonClick);
-    $("body").append($button);
-  }
-
-  addCssRules();
-  addButton();
+  $button.click(handleButtonClick);
+  $("body").append($button);
 }
 
 function handleButtonClick() {

@@ -26,11 +26,11 @@
   border: #f57c00 1px solid;
   cursor: pointer;
   box-shadow: 0px 3px 4px #bbb; }
-  .spinner .loading {
+  .spinner.loading {
     color: transparent;
     pointer-events: none;
     cursor: not-allowed; }
-    .spinner .loading .double-bounce1, .spinner .loading .double-bounce2 {
+    .spinner.loading .double-bounce1, .spinner.loading .double-bounce2 {
       visibility: visible; }
 
 .double-bounce1, .double-bounce2 {
