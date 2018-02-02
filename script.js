@@ -265,10 +265,9 @@ function handleButtonClick() {
   });
 
   Promise.all(promises).then(() => {
-    $("#zyboost-button").removeClass("loading");
-
-    $task.click(() => {
-      $task.fadeOut(300, () => $task.remove());
+    $task.fadeOut(3000, () => {
+      $task.remove();
+      $("#zyboost-button").removeClass("loading");
     });
   });
 }
